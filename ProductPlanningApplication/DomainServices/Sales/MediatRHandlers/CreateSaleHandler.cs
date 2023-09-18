@@ -2,13 +2,13 @@ using MediatR;
 using ProductPlanningApplication.DataAccess;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CreateSaleOperation;
 
-namespace ProductPlanningApplication.DomainServices.Sales;
+namespace ProductPlanningApplication.DomainServices.Sales.MediatRHandlers;
 
 public class CreateSaleHandler : IRequestHandler<Request, Response>
 {
-    private IDatabaseContext _databaseContext;
+    private readonly IProductPlanningDatabaseContext _databaseContext;
 
-    public CreateSaleHandler(IDatabaseContext databaseContext)
+    public CreateSaleHandler(IProductPlanningDatabaseContext databaseContext)
     {
         _databaseContext = databaseContext;
     }

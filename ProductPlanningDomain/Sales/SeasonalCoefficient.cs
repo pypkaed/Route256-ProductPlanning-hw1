@@ -1,4 +1,4 @@
-using ProductPlanningDomain.Products;
+using ProductPlanningDomain.Sales.ValueObjects;
 
 namespace ProductPlanningDomain.Sales;
 

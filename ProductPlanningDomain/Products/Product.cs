@@ -2,22 +2,14 @@ namespace ProductPlanningDomain.Products;
 
 public class Product : IEquatable<Product>
 {
-    public Product(Guid id, ProductAmount stock)
+    public Product(Guid id)
     {
         Id = id;
-        Stock = stock;
     }
     
     public Product() { }
     
     public Guid Id { get; init; }
-    public ProductAmount Stock { get; private set; }
-
-    public void AddStock(ProductAmount stock)
-        => Stock += stock;
-
-    public void RemoveStock(ProductAmount stock)
-        => Stock -= stock;
 
     public bool Equals(Product? other)
         => other?.Id.Equals(Id) ?? false;

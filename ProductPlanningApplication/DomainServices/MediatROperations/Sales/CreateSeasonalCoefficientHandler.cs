@@ -1,10 +1,15 @@
 using MediatR;
+using ProductPlanningApplication.DomainServices.Dtos;
 
 namespace ProductPlanningApplication.DomainServices.MediatROperations.Sales;
 
-public class CreateSeasonalCoefficientHandler
+public static class CreateSeasonalCoefficientHandler
 {
-    public record struct Request() : IRequest<Response>;
+    public record struct Request(
+        Guid ProductId,
+        decimal Coefficient,
+        int Month) 
+        : IRequest<Response>;
 
-    public record struct Response();
+    public record struct Response(SeasonalCoefficientDto SeasonalCoefficient);
 }

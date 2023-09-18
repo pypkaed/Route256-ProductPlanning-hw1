@@ -4,10 +4,11 @@ using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningApplication.DataAccess;
 
-public interface IDatabaseContext
+public interface IProductPlanningDatabaseContext
 {
     DbSet<Product> Products { get; }
     DbSet<Sale> Sales { get; }
+    DbSet<SeasonalCoefficient> SeasonalCoefficients { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
