@@ -11,6 +11,9 @@ public record struct ProductAmount
         Value = value;
     }
 
+    public ProductAmount()
+    { }
+
     public decimal Value { get; }
 
     public static ProductAmount operator +(ProductAmount a, ProductAmount b)

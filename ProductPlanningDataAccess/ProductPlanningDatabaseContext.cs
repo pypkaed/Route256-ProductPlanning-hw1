@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using ProductPlanningApplication.DataAccess;
-using ProductPlanningDomain.Products;
 using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningDataAccess;
@@ -12,7 +11,13 @@ internal class ProductPlanningDatabaseContext : DbContext, IProductPlanningDatab
     {
         Database.EnsureCreated();
     }
-    public DbSet<Product> Products { get; }
-    public DbSet<Sale> Sales { get; }
-    public DbSet<SeasonalCoefficient> SeasonalCoefficients { get; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<SeasonalCoefficient>()
+            .HasKey(c => new { c.ProductId, c.Month });
+    }
+
+    public DbSet<Sale> Sales { get; private init; } = null!;
+    public DbSet<SeasonalCoefficient> SeasonalCoefficients { get; private init; } = null!;
 }

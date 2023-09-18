@@ -1,6 +1,6 @@
-namespace ProductPlanningApplication.DomainServices.Dtos;
+namespace ProductPlanningApplication.Dtos;
 
 public record SeasonalCoefficientDto(
-    Guid ProductId,
+    int ProductId,
     decimal Coefficient,
     int Month);

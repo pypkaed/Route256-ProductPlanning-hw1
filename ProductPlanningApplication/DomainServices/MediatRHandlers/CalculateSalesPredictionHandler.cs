@@ -1,7 +1,7 @@
 using MediatR;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CalculateSalesPredictionOperation;
 
-namespace ProductPlanningApplication.DomainServices.Sales.MediatRHandlers;
+namespace ProductPlanningApplication.DomainServices.MediatRHandlers;
 
 public class CalculateSalesPredictionHandler : IRequestHandler<Request, Response>
 {

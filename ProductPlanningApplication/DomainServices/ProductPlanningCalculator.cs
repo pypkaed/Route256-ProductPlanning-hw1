@@ -3,7 +3,7 @@ using ProductPlanningApplication.DataAccess;
 using ProductPlanningApplication.Extensions;
 using ProductPlanningDomain.Sales.ValueObjects;
 
-namespace ProductPlanningApplication.DomainServices.Sales;
+namespace ProductPlanningApplication.DomainServices;
 
 public class ProductPlanningCalculator : IProductPlanningCalculator
 {
@@ -14,20 +14,25 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         _databaseContext = databaseContext;
     }
 
-    public async Task<decimal> CalculateAverageDailySalesAsync(Guid productId, CancellationToken cancellationToken)
+    public async Task<decimal> CalculateAverageDailySalesAsync(int productId, CancellationToken cancellationToken)
     {
         var sales = await _databaseContext.Sales
             .Where(s => s.ProductId == productId)
             .ToListAsync(cancellationToken);
+        if (sales.Count == 0)
+            throw new Exception();
 
         var amountSold = sales.Select(s => s.AmountSold.Value).Sum();
         var numOfDaysInStock = sales.Count(s => s.InStock.Value > 0);
+        if (numOfDaysInStock == 0)
+            throw new Exception();
+        
         var averageDailySales = amountSold / numOfDaysInStock;
         
         return averageDailySales;
     }
 
-    public async Task<decimal> CalculateSalesPredictionAsync(Guid productId, int numOfDays, CancellationToken cancellationToken)
+    public async Task<decimal> CalculateSalesPredictionAsync(int productId, int numOfDays, CancellationToken cancellationToken)
     {
         var averageDailySales = await CalculateAverageDailySalesAsync(productId, cancellationToken);
         var currentDate = DateTime.Now;
@@ -40,7 +45,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
                 DaysInMonth = (decimal)group.Count()
             });
 
-        Coefficient coefficient;
+        var coefficient = new Coefficient(0);
         foreach (var month in monthsInFuture)
         {
             var seasonalCoefficient = await _databaseContext.SeasonalCoefficients.GetEntityAsync(
@@ -53,17 +58,39 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         return salesPrediction;
     }
 
-    public async Task<decimal> CalculateDemandAsync(Guid productId, int numOfDays, CancellationToken cancellationToken)
+    public async Task<decimal> CalculateDemandSuppliedAsync(int productId, int numOfDays, DateTime supplyDate, CancellationToken cancellationToken)
+    {
+        var supplySaleProductEntry = await _databaseContext.Sales
+            .Where(s => s.ProductId == productId)
+            .OrderBy(s => s.Date)
+            .FirstOrDefaultAsync(
+                // check only by date, without time
+                s => s.Date.Date.Equals(supplyDate.Date), 
+                cancellationToken) 
+                                     ?? throw new Exception();
+        var productAmountInStock = supplySaleProductEntry.InStock;
+
+        var salesPrediction = await CalculateSalesPredictionAsync(productId, numOfDays, cancellationToken);
+        var demand = salesPrediction - productAmountInStock.Value;
+
+        return demand > 0 ? demand : 0;
+    }
+    
+    public async Task<decimal> CalculateDemandAsync(int productId, int numOfDays, CancellationToken cancellationToken)
     {
         var lastSaleProductEntry = await _databaseContext.Sales
             .Where(s => s.ProductId == productId)
             .OrderBy(s => s.Date)
             .LastAsync(cancellationToken);
+        
+        if (lastSaleProductEntry is null)
+            throw new Exception();
+        
         var productAmountInStock = lastSaleProductEntry.InStock;
 
         var salesPrediction = await CalculateSalesPredictionAsync(productId, numOfDays, cancellationToken);
         var demand = salesPrediction - productAmountInStock.Value;
 
-        return demand;
+        return demand > 0 ? demand : 0;
     }
 }

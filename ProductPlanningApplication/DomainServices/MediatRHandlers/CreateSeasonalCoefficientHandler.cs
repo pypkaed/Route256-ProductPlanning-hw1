@@ -1,11 +1,11 @@
 using MediatR;
 using ProductPlanningApplication.DataAccess;
-using ProductPlanningApplication.DomainServices.Dtos.Mapping;
+using ProductPlanningApplication.Dtos.Mapping;
 using ProductPlanningDomain.Sales;
 using ProductPlanningDomain.Sales.ValueObjects;
-using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CreateSeasonalCoefficientHandler;
+using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CreateSeasonalCoefficientOperation;
 
-namespace ProductPlanningApplication.DomainServices.Sales.MediatRHandlers;
+namespace ProductPlanningApplication.DomainServices.MediatRHandlers;
 
 public class CreateSeasonalCoefficientHandler : IRequestHandler<Request, Response>
 {

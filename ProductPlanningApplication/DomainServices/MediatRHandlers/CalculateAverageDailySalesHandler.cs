@@ -1,9 +1,7 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using ProductPlanningApplication.DataAccess;
-using static ProductPlanningApplication.DomainServices.MediatROperations.Products.CalculateAverageDailySalesOperation;
+using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CalculateAverageDailySalesOperation;
 
-namespace ProductPlanningApplication.DomainServices.Sales.MediatRHandlers;
+namespace ProductPlanningApplication.DomainServices.MediatRHandlers;
 
 public class CalculateAverageDailySalesHandler : IRequestHandler<Request, Response>
 {

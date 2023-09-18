@@ -13,6 +13,9 @@ public record struct Coefficient
         Value = value;
     }
 
+    public Coefficient()
+    { }
+
     public decimal Value { get; }
     
     private static void ValidateValue(decimal value)
