@@ -48,16 +48,16 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
                 DaysInMonth = (decimal)group.Count()
             });
 
-        var coefficient = new Coefficient(0);
+        decimal coefficient = 0;
         foreach (var month in monthsInFuture)
         {
             var seasonalCoefficient = await _databaseContext.SeasonalCoefficients.GetEntityAsync(
                 new object?[]{ productId, month.Month },
                 cancellationToken);
-            coefficient += seasonalCoefficient.Coefficient * month.DaysInMonth;
+            coefficient += seasonalCoefficient.Coefficient.Value * month.DaysInMonth;
         }
 
-        var salesPrediction = averageDailySales * coefficient.Value;
+        var salesPrediction = averageDailySales * coefficient;
         return salesPrediction;
     }
 

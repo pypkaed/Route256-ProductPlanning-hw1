@@ -1,7 +1,7 @@
 using MediatR;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CalculateDemandOperation;
 
-namespace ProductPlanningApplication.DomainServices.MediatRHandlers;
+namespace ProductPlanningApplication.DomainServices.MediatRHandlers.Calculate;
 
 public class CalculateDemandHandler : IRequestHandler<Request, Response>
 {

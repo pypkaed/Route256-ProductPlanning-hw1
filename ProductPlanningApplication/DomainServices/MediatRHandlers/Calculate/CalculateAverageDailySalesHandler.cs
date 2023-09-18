@@ -1,7 +1,7 @@
 using MediatR;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CalculateAverageDailySalesOperation;
 
-namespace ProductPlanningApplication.DomainServices.MediatRHandlers;
+namespace ProductPlanningApplication.DomainServices.MediatRHandlers.Calculate;
 
 public class CalculateAverageDailySalesHandler : IRequestHandler<Request, Response>
 {
