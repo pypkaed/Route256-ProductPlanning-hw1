@@ -1,13 +1,13 @@
 using ProductPlanningDomain.Exceptions;
+using ProductPlanningDomain.Validators;
 
 namespace ProductPlanningDomain.Sales.ValueObjects;
 
 public record struct ProductAmount
 {
-    private const decimal MinProductAmount = 0m;
     public ProductAmount(decimal value)
     {
-        ValidateValue(value);
+        ValueObjectValidator.ValidateProductAmount(value);
         Value = value;
     }
 
@@ -19,7 +19,7 @@ public record struct ProductAmount
     public static ProductAmount operator +(ProductAmount a, ProductAmount b)
     {
         var newValue = a.Value + b.Value;
-        ValidateValue(newValue);
+        ValueObjectValidator.ValidateProductAmount(newValue);
         
         return new ProductAmount(newValue);
     }
@@ -27,16 +27,8 @@ public record struct ProductAmount
     public static ProductAmount operator -(ProductAmount a, ProductAmount b)
     {
         var newValue = a.Value - b.Value;
-        ValidateValue(newValue);
+        ValueObjectValidator.ValidateProductAmount(newValue);
         
         return new ProductAmount(newValue);
-    }
-
-    private static void ValidateValue(decimal value)
-    {
-        if (value < MinProductAmount)
-        {
-            throw ValueObjectException.InvalidValue(value, MinProductAmount);
-        }
     }
 }

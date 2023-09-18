@@ -1,6 +1,7 @@
 using MediatR;
 using ProductPlanningApplication.DataAccess;
 using ProductPlanningApplication.Dtos.Mapping;
+using ProductPlanningApplication.Exceptions;
 using ProductPlanningDomain.Sales;
 using ProductPlanningDomain.Sales.ValueObjects;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Sales.CreateSaleOperation;
@@ -19,13 +20,19 @@ public class CreateSaleHandler : IRequestHandler<Request, Response>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
         var sale = new Sale(
-            Guid.NewGuid(),
             request.ProductId,
-            request.Date,
+            request.Date.Date,
             amountSold: new ProductAmount(request.Sales),
             inStock: new ProductAmount(request.Stock));
-        
-        // TODO: checks if exists
+
+        if (await _databaseContext.Sales
+                .FindAsync(
+                    new object?[] { sale.ProductId, sale.Date },
+                    cancellationToken)
+            is not null)
+        {
+            throw ServiceException.RepeatingEntity("Sale", new object?[] { sale.ProductId, sale.Date });
+        }
         
         _databaseContext.Sales.Add(sale);
         await _databaseContext.SaveChangesAsync(cancellationToken);

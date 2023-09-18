@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProductPlanningApplication.Exceptions;
 
 namespace ProductPlanningApplication.Extensions;
 
@@ -15,7 +16,7 @@ public static class DbSetExtension
             cancellationToken);
 
         if (entity is null)
-            throw new Exception();
+            throw ServiceException.DbSetEntityNotFound(dbSet.EntityType, keys);
 
         return entity;
     }

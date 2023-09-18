@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProductPlanningApplication.DataAccess;
+using ProductPlanningApplication.Exceptions;
 using ProductPlanningApplication.Extensions;
 using ProductPlanningDomain.Sales.ValueObjects;
 
@@ -20,12 +21,14 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
             .Where(s => s.ProductId == productId)
             .ToListAsync(cancellationToken);
         if (sales.Count == 0)
-            throw new Exception();
+            throw ServiceException.DbSetEntityNotFound(
+                _databaseContext.Sales.EntityType,
+                new object?[] { productId });
 
         var amountSold = sales.Select(s => s.AmountSold.Value).Sum();
         var numOfDaysInStock = sales.Count(s => s.InStock.Value > 0);
         if (numOfDaysInStock == 0)
-            throw new Exception();
+            throw CalculationsException.NotEnoughStock(productId);
         
         var averageDailySales = amountSold / numOfDaysInStock;
         
@@ -67,7 +70,9 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
                 // check only by date, without time
                 s => s.Date.Date.Equals(supplyDate.Date), 
                 cancellationToken) 
-                                     ?? throw new Exception();
+                                     ?? throw ServiceException.DbSetEntityNotFound(
+                                         _databaseContext.Sales.EntityType,
+                                         new object?[] { productId });;
         var productAmountInStock = supplySaleProductEntry.InStock;
 
         var salesPrediction = await CalculateSalesPredictionAsync(productId, numOfDays, cancellationToken);
@@ -84,7 +89,9 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
             .LastAsync(cancellationToken);
         
         if (lastSaleProductEntry is null)
-            throw new Exception();
+            throw ServiceException.DbSetEntityNotFound(
+                _databaseContext.Sales.EntityType,
+                new object?[] { productId });
         
         var productAmountInStock = lastSaleProductEntry.InStock;
 

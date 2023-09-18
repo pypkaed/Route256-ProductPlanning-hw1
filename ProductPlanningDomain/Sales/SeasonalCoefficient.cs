@@ -1,4 +1,5 @@
 using ProductPlanningDomain.Sales.ValueObjects;
+using ProductPlanningDomain.Validators;
 
 namespace ProductPlanningDomain.Sales;
 
@@ -9,7 +10,7 @@ public class SeasonalCoefficient
         Coefficient coefficient,
         int month)
     {
-        // TODO: validation
+        ValueObjectValidator.ValidateProductId(productId);
         ProductId = productId;
         Coefficient = coefficient;
         Month = month;
