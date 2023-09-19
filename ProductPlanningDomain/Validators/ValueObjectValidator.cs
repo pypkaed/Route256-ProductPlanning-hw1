@@ -11,6 +11,9 @@ public static class ValueObjectValidator
     private const decimal MinCoefficientValue = 0m;
     private const decimal MaxCoefficientValue = 10m;
 
+    private const int January = 1;
+    private const int December = 12;
+
     public static void ValidateProductId(int id)
     {
         if (id < MinProductId)
@@ -38,6 +41,13 @@ public static class ValueObjectValidator
         if (value is < MinCoefficientValue or > MaxCoefficientValue)
         {
             throw ValueObjectException.InvalidValue(value, MinCoefficientValue, MaxCoefficientValue);
+        }
+    }
+    public static void ValidateMonth(int month)
+    {
+        if (month is < January or > December)
+        {
+            throw ValueObjectException.InvalidValue(month, min: January, max: December);
         }
     }
 }

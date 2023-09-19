@@ -25,13 +25,13 @@ public class DatabaseService : IDatabaseService
     {
         var sale = new Sale(
             productId,
-            date,
+            date.Date,
             amountSold: new ProductAmount(sales),
             inStock: new ProductAmount(stock));
 
         if (await _databaseContext.Sales
                 .FindAsync(
-                    new object?[] { sale.ProductId, sale.Date },
+                    new object?[] { sale.ProductId, sale.Date.Date },
                     cancellationToken) is not null)
         {
             throw ServiceException.RepeatingEntity("Sale", new object?[] { sale.ProductId, sale.Date });

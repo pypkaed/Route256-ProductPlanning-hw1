@@ -11,6 +11,7 @@ public class SeasonalCoefficient
         int month)
     {
         ValueObjectValidator.ValidateProductId(productId);
+        ValueObjectValidator.ValidateMonth(month);
         ProductId = productId;
         Coefficient = coefficient;
         Month = month;

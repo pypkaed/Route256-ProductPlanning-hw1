@@ -4,12 +4,13 @@ using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningDataAccess;
 
-internal class ProductPlanningDatabaseContext : DbContext, IProductPlanningDatabaseContext
+public class ProductPlanningDatabaseContext : DbContext, IProductPlanningDatabaseContext
 {
     public ProductPlanningDatabaseContext(DbContextOptions<ProductPlanningDatabaseContext> options)
         : base(options)
     {
         Database.EnsureCreated();
+        Database.EnsureDeleted();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
