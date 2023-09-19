@@ -56,6 +56,7 @@ public class DomainServiceTest
     [Fact]
     public async Task CalculateDemandNow()
     {
+        // in future:
         // 12 days in September with seasonal coefficient of 0.1,
         // 1 day in November with seasonal coefficient 10
         // last stock: 100
@@ -70,59 +71,71 @@ public class DomainServiceTest
             productId: 1,
             numOfDays: 13,
             CancellationToken.None);
+        var expected = salesPrediction - 100;
+        expected = expected > 0 ? expected : 0;
         
-        Assert.Equal(salesPrediction - 100, demand);
+        Assert.Equal(expected, demand);
     }
     
     [Fact]
-    public async Task CalculateDemandFifthEntry()
+    public async Task CalculateDemandSupplied()
     {
+        // in future:
         // 12 days in September with seasonal coefficient of 0.1,
         // 1 day in November with seasonal coefficient 10
-        // in stock in fifth entry: 50
+        // last stock: 100
         await ArrangeSales(productId: 1);
         await ArrangeSeasonalCoefficients(productId: 1);
-        
+
+        var supplySalesPrediction = await _calculator.CalculateSalesPredictionAsync(
+            productId: 1,
+            numOfDays: 5,
+            CancellationToken.None);
+        var stockSupplied = 100 - supplySalesPrediction;
         var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
-            numOfDays: 13,
+            numOfDays: 13 - 5,
+            currentDate: DateTime.Now.AddDays(5),
             CancellationToken.None);
+        
         var demand = await _calculator.CalculateDemandSuppliedAsync(
             productId: 1,
             numOfDays: 13,
-            supplyDate: DateTime.Parse("09/24/2023"),
+            supplyDate: DateTime.Parse("09/25/2023"),
             CancellationToken.None);
+
+        var expected = salesPrediction - stockSupplied;
         
-        Assert.Equal(salesPrediction - 50, demand);
+        Assert.Equal(expected, demand);
     }
 
     private async Task ArrangeSales(int productId)
     {
         var date = DateTime.Parse("09/19/2023");
         await _databaseService.CreateSale(productId, date, 10, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 15, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 30, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 50, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 0, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 0, 50, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 0, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 0, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 50, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 30, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 40, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 15, 100, CancellationToken.None);
-        date = date.AddDays(1);
+        date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 29, 100, CancellationToken.None);
     }
 
