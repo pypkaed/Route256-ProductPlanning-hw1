@@ -8,6 +8,8 @@ public class ServiceException : Exception
 
     public static ServiceException RepeatingEntity(string entityName, object?[] keys)
         => new ServiceException($"Entity {entityName} with keys {keys} already exists.");
+    public static ServiceException RepeatingEntity(string entityName)
+        => new ServiceException($"Entity {entityName} already exists.");
     public static ServiceException DbSetEntityNotFound(IEntityType entityType, object?[] keys)
         => new ServiceException($"Could not find entity {entityType} with keys {keys}.");
 }

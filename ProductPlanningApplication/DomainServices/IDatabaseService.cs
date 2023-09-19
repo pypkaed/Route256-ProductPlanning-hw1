@@ -1,4 +1,5 @@
 using ProductPlanningApplication.Dtos;
+using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningApplication.DomainServices;
 
@@ -16,4 +17,7 @@ public interface IDatabaseService
         int month,
         decimal coeff,
         CancellationToken cancellationToken);
+
+    public Task<List<SaleDto>> CreateSalesBulk(IEnumerable<Sale> sales, CancellationToken cancellationToken);
+    public Task<List<SeasonalCoefficientDto>> CreateSeasonalCoefficientsBulk(IEnumerable<SeasonalCoefficient> coefficients, CancellationToken cancellationToken);
 }

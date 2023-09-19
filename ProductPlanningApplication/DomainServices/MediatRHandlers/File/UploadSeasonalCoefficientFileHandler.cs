@@ -2,7 +2,7 @@ using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 using MediatR;
-using ProductPlanningApplication.Dtos;
+using ProductPlanningApplication.Dtos.Mapping;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Files.UploadSeasonalCoefficientFileOperation;
 
 namespace ProductPlanningApplication.DomainServices.MediatRHandlers.File;
@@ -26,17 +26,11 @@ public class UploadSeasonalCoefficientFileHandler : IRequestHandler<Request, Res
         using (var reader = new StreamReader(request.FileStream))
         using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
         {
-            var coefficient = new List<SeasonalCoefficientDto>();
+            var seasonalCoefficients = csv.GetRecords<SeasonalCoefficientCsv>().AsSeasonalCoefficient();
 
-            while (await csv.ReadAsync())
-            {
-                var coef = csv.GetRecord<SeasonalCoefficientCsv>();
-
-                coefficient.Add(await _databaseService.CreateSeasonalCoefficient(
-                    coef.Id, coef.Month, coef.Coeff, cancellationToken));
-            }
+            var coefficientsDto = await _databaseService.CreateSeasonalCoefficientsBulk(seasonalCoefficients, cancellationToken);
             
-            return new Response(coefficient);
+            return new Response(coefficientsDto);
         }
     }
 }

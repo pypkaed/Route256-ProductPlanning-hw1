@@ -70,4 +70,61 @@ public class DatabaseService : IDatabaseService
 
         return seasonalCoefficient.AsDto();
     }
+
+    public async Task<List<SaleDto>> CreateSalesBulk(
+        IEnumerable<Sale> sales,
+        CancellationToken cancellationToken)
+    {
+        var salesList = sales.ToList();
+        if (AnySaleRecordExists(salesList))
+            throw ServiceException.RepeatingEntity("Sale");
+
+        _databaseContext.Sales.AddRange(salesList);
+        await _databaseContext.SaveChangesAsync(cancellationToken);
+
+        return salesList.AsDto();
+    }
+
+    public async Task<List<SeasonalCoefficientDto>> CreateSeasonalCoefficientsBulk(
+        IEnumerable<SeasonalCoefficient> coefficients,
+        CancellationToken cancellationToken)
+    {
+        var coefficientList = coefficients.ToList();
+        if (AnySeasonalCoefficientRecordExists(coefficientList))
+            throw ServiceException.RepeatingEntity("Sale");
+
+        _databaseContext.SeasonalCoefficients.AddRange(coefficientList);
+        await _databaseContext.SaveChangesAsync(cancellationToken);
+
+        return coefficientList.AsDto();
+    }
+
+    public bool AnySaleRecordExists(IEnumerable<Sale> sales)
+    {
+        var keys = sales.Select(e => new object?[]
+        {
+            e.ProductId,
+            e.Date
+        }).ToList();
+
+        return _databaseContext.Sales.Any(e => keys.Contains(new object?[]
+        {
+            e.ProductId,
+            e.Date
+        }));
+    }
+    public bool AnySeasonalCoefficientRecordExists(IEnumerable<SeasonalCoefficient> coefficients)
+    {
+        var keys = coefficients.Select(e => new object?[]
+        {
+            e.ProductId,
+            e.Month
+        }).ToList();
+
+        return _databaseContext.SeasonalCoefficients.Any(e => keys.Contains(new object?[]
+        {
+            e.ProductId,
+            e.Month
+        }));
+    }
 }

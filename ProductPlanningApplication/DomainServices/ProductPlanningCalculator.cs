@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using ProductPlanningApplication.DataAccess;
 using ProductPlanningApplication.Exceptions;
 using ProductPlanningApplication.Extensions;
-using ProductPlanningDomain.Sales.ValueObjects;
 
 namespace ProductPlanningApplication.DomainServices;
 

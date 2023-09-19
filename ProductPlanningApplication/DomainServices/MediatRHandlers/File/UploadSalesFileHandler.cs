@@ -3,6 +3,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using MediatR;
 using ProductPlanningApplication.Dtos;
+using ProductPlanningApplication.Dtos.Mapping;
 using static ProductPlanningApplication.DomainServices.MediatROperations.Files.UploadSalesFileOperation;
 
 namespace ProductPlanningApplication.DomainServices.MediatRHandlers.File;
@@ -25,21 +26,11 @@ public class UploadSalesFileHandler : IRequestHandler<Request, Response>
         using (var reader = new StreamReader(request.FileStream))
         using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
         {
-            var sales = new List<SaleDto>();
+            var sales = csv.GetRecords<SaleCsv>().AsSale();
 
-            while (await csv.ReadAsync())
-            {
-                var sale = csv.GetRecord<SaleCsv>();
-                
-                sales.Add(await _databaseService.CreateSale(
-                    sale.Id,
-                    sale.Date, 
-                    sale.Sales,
-                    sale.Stock, 
-                    cancellationToken));
-            }
+            var salesDto = await _databaseService.CreateSalesBulk(sales, cancellationToken);
             
-            return new Response(sales);
+            return new Response(salesDto);
         }
     }
 }
