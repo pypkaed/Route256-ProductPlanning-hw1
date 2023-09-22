@@ -20,10 +20,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-ads")]
     public async Task<ActionResult<decimal>> CalculateAverageDailySales(
-        [FromBody] CalculateAverageDailySalesModel model)
+        [FromBody] CalculateAverageDailySalesRequest request)
     {
-        var request = new CalculateAverageDailySalesOperation.Request(model.ProductId);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CalculateAverageDailySalesOperation.Request(request.ProductId);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
 
         return Ok(response.AverageDailySales);
     }
@@ -31,12 +31,12 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-sales-prediction")]
     public async Task<ActionResult<decimal>> CalculateSalesPrediction(
-        [FromBody] CalculateSalesPredictionModel model)
+        [FromBody] CalculateSalesPredictionRequest request)
     {
-        var request = new CalculateSalesPredictionOperation.Request(
-            model.ProductId,
-            model.Days);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CalculateSalesPredictionOperation.Request(
+            request.ProductId,
+            request.Days);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
 
         return Ok(response.SalesPrediction);
     }
@@ -44,10 +44,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-demand-supplied")]
     public async Task<ActionResult<decimal>> CalculateDemandSupplied(
-        [FromBody] CalculateDemandSuppliedModel model)
+        [FromBody] CalculateDemandSuppliedRequest request)
     {
-        var request = new CalculateDemandSuppliedOperation.Request(model.ProductId, model.Days, model.Date);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CalculateDemandSuppliedOperation.Request(request.ProductId, request.Days, request.Date);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
     
         return Ok(response.Demand);
     }
@@ -55,10 +55,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-demand")]
     public async Task<ActionResult<decimal>> CalculateDemand(
-        [FromBody] CalculateDemandModel model)
+        [FromBody] CalculateDemandRequest request)
     {
-        var request = new CalculateDemandOperation.Request(model.ProductId, model.Days);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CalculateDemandOperation.Request(request.ProductId, request.Days);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
     
         return Ok(response.Demand);
     }

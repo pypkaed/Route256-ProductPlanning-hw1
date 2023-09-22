@@ -20,14 +20,14 @@ public class CreateController : ControllerBase
     [HttpPost]
     [Route("/create-sale")]
     public async Task<ActionResult<SaleDto>> CreateSale(
-        [FromBody] CreateSaleModel model)
+        [FromBody] CreateSaleRequest request)
     {
-        var request = new CreateSaleOperation.Request(
-            model.ProductId,
-            model.Date,
-            model.Sales,
-            model.Stock);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CreateSaleOperation.Request(
+            request.ProductId,
+            request.Date,
+            request.Sales,
+            request.Stock);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
 
         return Ok(response.Sale);
     }
@@ -35,13 +35,13 @@ public class CreateController : ControllerBase
     [HttpPost]
     [Route("/create-seasonal-coefficient")]
     public async Task<ActionResult<SeasonalCoefficientDto>> CreateSeasonalCoefficient(
-        [FromBody] CreateSeasonalCoefficientModel model)
+        [FromBody] CreateSeasonalCoefficientRequest request)
     {
-        var request = new CreateSeasonalCoefficientOperation.Request(
-            model.ProductId,
-            model.Coefficient,
-            model.Month);
-        var response = await _mediator.Send(request, CancellationToken);
+        var sendRequest = new CreateSeasonalCoefficientOperation.Request(
+            request.ProductId,
+            request.Coefficient,
+            request.Month);
+        var response = await _mediator.Send(sendRequest, CancellationToken);
 
         return Ok(response.SeasonalCoefficient);
     }

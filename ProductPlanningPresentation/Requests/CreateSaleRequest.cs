@@ -1,6 +1,6 @@
 namespace ProductPlanningPresentation.Models;
 
-public record CreateSaleModel(
+public record CreateSaleRequest(
     int ProductId,
     DateTime Date, 
     decimal Sales, 
