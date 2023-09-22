@@ -16,7 +16,7 @@ public class CreateSaleHandler : IRequestHandler<Request, Response>
     {
         return new Response(await _databaseService.CreateSale(
             request.ProductId,
-            request.Date.Date,
+            new DateOnly(request.Date.Year, request.Date.Month, request.Date.Day),
             request.Sales, 
             request.Stock, 
             cancellationToken));

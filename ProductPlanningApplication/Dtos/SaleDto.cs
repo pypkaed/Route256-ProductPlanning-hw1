@@ -2,6 +2,6 @@ namespace ProductPlanningApplication.Dtos;
 
 public record SaleDto(
     int ProductId,
-    DateTime Date,
+    DateOnly Date,
     decimal AmountSold,
     decimal InStock);

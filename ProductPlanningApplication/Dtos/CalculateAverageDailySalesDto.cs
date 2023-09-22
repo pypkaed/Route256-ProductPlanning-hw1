@@ -1,0 +1,3 @@
+namespace ProductPlanningApplication.Dtos;
+
+public record CalculateAverageDailySalesDto(decimal AverageDailySales);

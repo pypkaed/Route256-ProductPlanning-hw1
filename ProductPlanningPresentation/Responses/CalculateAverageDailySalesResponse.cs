@@ -1,3 +1,0 @@
-namespace ProductPlanningPresentation.Responses;
-
-public record CalculateAverageDailySalesResponse(decimal AverageDailySales);

@@ -6,7 +6,7 @@ namespace ProductPlanningDomain.Sales;
 public class Sale : IEquatable<Sale>
 {
     public Sale(int productId,
-                DateTime date,
+                DateOnly date,
                 ProductAmount amountSold,
                 ProductAmount inStock)
     {
@@ -21,7 +21,7 @@ public class Sale : IEquatable<Sale>
     public Sale() { }
     
     public int ProductId { get; init; }
-    public DateTime Date { get; init; }
+    public DateOnly Date { get; init; }
     public ProductAmount AmountSold { get; init; }
     public ProductAmount InStock { get; init; }
     

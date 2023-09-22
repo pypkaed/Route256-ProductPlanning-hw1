@@ -18,23 +18,23 @@ public class DatabaseService : IDatabaseService
     
     public async Task<SaleDto> CreateSale(
         int productId,
-        DateTime date,
+        DateOnly date,
         decimal sales,
         decimal stock,
         CancellationToken cancellationToken)
     {
         var sale = new Sale(
             productId,
-            date.Date,
+            date,
             amountSold: new ProductAmount(sales),
             inStock: new ProductAmount(stock));
 
         if (await _databaseContext.Sales
                 .FindAsync(
-                    new object?[] { sale.ProductId, sale.Date.Date },
+                    new object?[] { sale.ProductId, sale.Date },
                     cancellationToken) is not null)
         {
-            throw ServiceException.RepeatingEntity("Sale", new object?[] { sale.ProductId, sale.Date });
+            throw ServiceException.RepeatingEntity("Sale", new object?[] { sale.ProductId, sale });
         }
         
         _databaseContext.Sales.Add(sale);

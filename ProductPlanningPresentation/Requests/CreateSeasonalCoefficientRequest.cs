@@ -1,4 +1,4 @@
-namespace ProductPlanningPresentation.Models;
+namespace ProductPlanningPresentation.Requests;
 
 public record CreateSeasonalCoefficientRequest(
         int ProductId,

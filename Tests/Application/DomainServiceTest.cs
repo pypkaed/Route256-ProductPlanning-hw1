@@ -33,7 +33,7 @@ public class DomainServiceTest
 
         var ads = await _calculator.CalculateAverageDailySalesAsync(1, CancellationToken.None);
         
-        Assert.Equal(7.5m, ads);
+        Assert.Equal(7.5m, ads.AverageDailySales);
     }
     
     [Fact]
@@ -48,9 +48,10 @@ public class DomainServiceTest
         var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
             numOfDays: 13,
+            currentDate: DateTime.Parse("09/19/2023"),
             CancellationToken.None);
         
-        Assert.Equal(ads * ((12m * 0.1m) + (1m * 10m)), salesPrediction);
+        Assert.Equal(ads.AverageDailySales * ((12m * 0.1m) + (1m * 10m)), salesPrediction.SalesPrediction);
     }
 
     [Fact]
@@ -71,10 +72,10 @@ public class DomainServiceTest
             productId: 1,
             numOfDays: 13,
             CancellationToken.None);
-        var expected = salesPrediction - 100;
+        var expected = salesPrediction.SalesPrediction - 100;
         expected = expected > 0 ? expected : 0;
         
-        Assert.Equal(expected, demand);
+        Assert.Equal(expected, demand.Demand);
     }
     
     [Fact]
@@ -91,7 +92,7 @@ public class DomainServiceTest
             productId: 1,
             numOfDays: 5,
             CancellationToken.None);
-        var stockSupplied = 100 - supplySalesPrediction;
+        var stockSupplied = 100 - supplySalesPrediction.SalesPrediction;
         var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
             numOfDays: 13 - 5,
@@ -104,9 +105,9 @@ public class DomainServiceTest
             supplyDate: DateTime.Parse("09/25/2023"),
             CancellationToken.None);
 
-        var expected = salesPrediction - stockSupplied;
+        var expected = salesPrediction.SalesPrediction - stockSupplied;
         
-        Assert.Equal(expected, demand);
+        Assert.Equal(expected, demand.Demand);
     }
 
     private async Task ArrangeSales(int productId)

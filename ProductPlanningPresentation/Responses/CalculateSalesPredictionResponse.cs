@@ -1,3 +1,0 @@
-namespace ProductPlanningPresentation.Responses;
-
-public record CalculateSalesPredictionResponse(decimal SalesPrediction);

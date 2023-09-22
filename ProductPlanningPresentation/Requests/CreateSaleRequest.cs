@@ -1,7 +1,7 @@
-namespace ProductPlanningPresentation.Models;
+namespace ProductPlanningPresentation.Requests;
 
 public record CreateSaleRequest(
     int ProductId,
-    DateTime Date, 
+    DateOnly Date, 
     decimal Sales, 
     decimal Stock);

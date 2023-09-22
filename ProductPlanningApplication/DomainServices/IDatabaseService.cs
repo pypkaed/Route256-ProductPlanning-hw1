@@ -7,7 +7,7 @@ public interface IDatabaseService
 {
     Task<SaleDto> CreateSale(
         int productId,
-        DateTime date,
+        DateOnly date,
         decimal sales,
         decimal stock,
         CancellationToken cancellationToken);
