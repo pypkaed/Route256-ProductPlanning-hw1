@@ -7,7 +7,7 @@ using ProductPlanningPresentation.Models;
 namespace ProductPlanningPresentation.Controllers;
 
 [ApiController]
-[Route("api/")]
+[Route("api")]
 public class CreateController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,12 +16,9 @@ public class CreateController : ControllerBase
     {
         _mediator = mediator;
     }
-    
-    public CancellationToken CancellationToken 
-        => HttpContext.RequestAborted;
 
     [HttpPost]
-    [Route("/CreateSale")]
+    [Route("/create-sale")]
     public async Task<ActionResult<SaleDto>> CreateSale(
         [FromBody] CreateSaleModel model)
     {
@@ -36,7 +33,7 @@ public class CreateController : ControllerBase
     }
     
     [HttpPost]
-    [Route("/CreateSeasonalCoefficient")]
+    [Route("/create-seasonal-coefficient")]
     public async Task<ActionResult<SeasonalCoefficientDto>> CreateSeasonalCoefficient(
         [FromBody] CreateSeasonalCoefficientModel model)
     {

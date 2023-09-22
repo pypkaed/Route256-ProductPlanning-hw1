@@ -7,7 +7,7 @@ using ProductPlanningPresentation.Models;
 namespace ProductPlanningPresentation.Controllers;
 
 [ApiController]
-[Route("api/")]
+[Route("api")]
 public class CalculatorController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,11 +17,8 @@ public class CalculatorController : ControllerBase
         _mediator = mediator;
     }
 
-    public CancellationToken CancellationToken
-        => HttpContext.RequestAborted;
-
     [HttpPost]
-    [Route("CalculateADS")]
+    [Route("calculate-ads")]
     public async Task<ActionResult<decimal>> CalculateAverageDailySales(
         [FromBody] CalculateAverageDailySalesModel model)
     {
@@ -32,7 +29,7 @@ public class CalculatorController : ControllerBase
     }
     
     [HttpPost]
-    [Route("CalculateSalesPrediction")]
+    [Route("calculate-sales-prediction")]
     public async Task<ActionResult<decimal>> CalculateSalesPrediction(
         [FromBody] CalculateSalesPredictionModel model)
     {
@@ -45,7 +42,7 @@ public class CalculatorController : ControllerBase
     }
     
     [HttpPost]
-    [Route("CalculateDemandSupplied")]
+    [Route("calculate-demand-supplied")]
     public async Task<ActionResult<decimal>> CalculateDemandSupplied(
         [FromBody] CalculateDemandSuppliedModel model)
     {
@@ -56,7 +53,7 @@ public class CalculatorController : ControllerBase
     }
     
     [HttpPost]
-    [Route("CalculateDemand")]
+    [Route("calculate-demand")]
     public async Task<ActionResult<decimal>> CalculateDemand(
         [FromBody] CalculateDemandModel model)
     {

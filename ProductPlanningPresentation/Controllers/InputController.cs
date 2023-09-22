@@ -6,7 +6,7 @@ using ProductPlanningApplication.Dtos;
 namespace ProductPlanningPresentation.Controllers;
 
 [ApiController]
-[Route("api/")]
+[Route("api")]
 public class InputController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,11 +16,8 @@ public class InputController : ControllerBase
         _mediator = mediator;
     }
     
-    public CancellationToken CancellationToken 
-        => HttpContext.RequestAborted;
-
     [HttpPost]
-    [Route("/uploadFileSaleEntries")]
+    [Route("upload-file-sales")]
     public async Task<ActionResult<List<SaleDto>>> CreateSaleEntriesFromFile(IFormFile file)
     {
         var request = new UploadSalesFileOperation.Request(file.OpenReadStream());
@@ -30,7 +27,7 @@ public class InputController : ControllerBase
     }
     
     [HttpPost]
-    [Route("/uploadFileSeasonalCoefficientEntries")]
+    [Route("upload-file-seasonal-coefficients")]
     public async Task<ActionResult<List<SaleDto>>> CreateSeasonalCoefficientEntriesFromFile(IFormFile file)
     {
         var request = new UploadSeasonalCoefficientFileOperation.Request(file.OpenReadStream());
