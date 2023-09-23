@@ -12,7 +12,7 @@ public static class Program
         
         builder.Services.AddApplication();
         builder.Services.AddDatabase(options 
-            => options.UseInMemoryDatabase(databaseName: "ProductPlanningDb"));
+            => options.UseInMemoryDatabase(Config.DbName));
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
