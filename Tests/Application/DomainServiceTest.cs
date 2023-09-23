@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ProductPlanningApplication.DataAccess;
-using ProductPlanningApplication.DomainServices;
+using ProductPlanningApplication.DomainServices.Services;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningDataAccess;
 using Xunit;
 
@@ -8,7 +8,6 @@ namespace Tests.Application;
 
 public class DomainServiceTest
 {
-    private readonly IProductPlanningDatabaseContext _context;
     private readonly IDatabaseService _databaseService;
     private readonly IProductPlanningCalculator _calculator;
 
@@ -19,17 +18,31 @@ public class DomainServiceTest
                 .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .Options;
-        _context = new ProductPlanningDatabaseContext(options);
+        var context = new ProductPlanningDatabaseContext(options);
+        context.Database.EnsureCreated();
+        context.Database.EnsureDeleted();
 
-        _databaseService = new DatabaseService(_context);
-        _calculator = new ProductPlanningCalculator(_context);
+        _databaseService = new DatabaseService(context);
+        _calculator = new ProductPlanningCalculator(context);
     }
 
     [Fact]
     public async Task CalculateAds()
     {
-        await _databaseService.CreateSale(1, DateTime.Now, 10, 50, CancellationToken.None);
-        await _databaseService.CreateSale(1, DateTime.Now.AddDays(1), 5, 40, CancellationToken.None);
+        var dateNow = DateOnly.FromDateTime(DateTime.Now);
+
+        await _databaseService.CreateSale(
+            productId: 1,
+            dateNow,
+            sales: 10,
+            stock: 50,
+            CancellationToken.None);
+        await _databaseService.CreateSale(
+            productId: 1,
+            dateNow.AddDays(1),
+            sales: 5, 
+            stock: 40, 
+            CancellationToken.None);
 
         var ads = await _calculator.CalculateAverageDailySalesAsync(1, CancellationToken.None);
         
@@ -48,7 +61,7 @@ public class DomainServiceTest
         var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
             numOfDays: 13,
-            currentDate: DateTime.Parse("09/19/2023"),
+            currentDate: DateOnly.Parse("09/19/2023"),
             CancellationToken.None);
         
         Assert.Equal(ads.AverageDailySales * ((12m * 0.1m) + (1m * 10m)), salesPrediction.SalesPrediction);
@@ -88,6 +101,8 @@ public class DomainServiceTest
         await ArrangeSales(productId: 1);
         await ArrangeSeasonalCoefficients(productId: 1);
 
+        var dateNow = DateOnly.FromDateTime(DateTime.Now);
+
         var supplySalesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
             numOfDays: 5,
@@ -96,23 +111,23 @@ public class DomainServiceTest
         var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
             productId: 1,
             numOfDays: 13 - 5,
-            currentDate: DateTime.Now.AddDays(5),
+            currentDate: dateNow.AddDays(5),
             CancellationToken.None);
         
         var demand = await _calculator.CalculateDemandSuppliedAsync(
             productId: 1,
             numOfDays: 13,
-            supplyDate: DateTime.Parse("09/25/2023"),
+            supplyDate: DateOnly.Parse("09/25/2023"),
             CancellationToken.None);
 
         var expected = salesPrediction.SalesPrediction - stockSupplied;
         
-        Assert.Equal(expected, demand.Demand);
+        Assert.Equal((float)expected,(float) demand.Demand);
     }
 
     private async Task ArrangeSales(int productId)
     {
-        var date = DateTime.Parse("09/19/2023");
+        var date = DateOnly.Parse("09/19/2023");
         await _databaseService.CreateSale(productId, date, 10, 100, CancellationToken.None);
         date = date.AddDays(-1);
         await _databaseService.CreateSale(productId, date, 15, 100, CancellationToken.None);

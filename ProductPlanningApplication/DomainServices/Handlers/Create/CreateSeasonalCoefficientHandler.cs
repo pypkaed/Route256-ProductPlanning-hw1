@@ -1,6 +1,7 @@
 using MediatR;
 using ProductPlanningApplication.DomainServices.Operations.Requests;
 using ProductPlanningApplication.DomainServices.Operations.Responses;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 
 namespace ProductPlanningApplication.DomainServices.Handlers.Create;
 

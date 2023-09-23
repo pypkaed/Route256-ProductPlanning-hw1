@@ -20,7 +20,7 @@ public class SalesTest
         {
             var sales = new ProductAmount(amountSold);
             var stock = new ProductAmount(inStock);
-            var sale = new Sale(productId, DateTime.Now, sales, stock);
+            var sale = new Sale(productId, DateOnly.FromDateTime(DateTime.Now), sales, stock);
         });
     }
     

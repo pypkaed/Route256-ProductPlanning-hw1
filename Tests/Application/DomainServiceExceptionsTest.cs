@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ProductPlanningApplication.DataAccess;
 using ProductPlanningApplication.DomainServices;
+using ProductPlanningApplication.DomainServices.Services;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningApplication.Exceptions;
 using ProductPlanningDataAccess;
 using Xunit;
@@ -10,21 +12,22 @@ namespace Tests.Application;
 
 public class DomainServiceExceptionsTest
 {
-    private readonly IProductPlanningDatabaseContext _context;
     private readonly IDatabaseService _databaseService;
     private readonly IProductPlanningCalculator _calculator;
 
     public DomainServiceExceptionsTest()
     {
-        DbContextOptions<ProductPlanningDatabaseContext> options =
+        var options =
             new DbContextOptionsBuilder<ProductPlanningDatabaseContext>()
                 .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .Options;
-        _context = new ProductPlanningDatabaseContext(options);
+        var context = new ProductPlanningDatabaseContext(options);
+        context.Database.EnsureCreated();
+        context.Database.EnsureDeleted();
 
-        _databaseService = new DatabaseService(_context);
-        _calculator = new ProductPlanningCalculator(_context);
+        _databaseService = new DatabaseService(context);
+        _calculator = new ProductPlanningCalculator(context);
     }
 
     [Fact]
@@ -41,22 +44,19 @@ public class DomainServiceExceptionsTest
     {
         await Assert.ThrowsAsync<ServiceException>(async () =>
         {
-            await _databaseService.CreateSale(1, DateTime.Now, 10, 50, CancellationToken.None);
-            await _databaseService.CreateSale(1, DateTime.Now, 50, 100, CancellationToken.None);
-        });
-        
-        await Assert.ThrowsAsync<ServiceException>(async () =>
-        {
-            await _databaseService.CreateSale(1, DateTime.Now, 10, 50, CancellationToken.None);
-            await _databaseService.CreateSale(1, DateTime.Now.AddMinutes(15), 50, 100, CancellationToken.None);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
+
+            await _databaseService.CreateSale(1, dateNow, 10, 50, CancellationToken.None);
+            await _databaseService.CreateSale(1, dateNow, 50, 100, CancellationToken.None);
         });
     }
 
     [Fact]
     public async Task CalculateAds_ThrowCalculationsException()
     {
-        await _databaseService.CreateSale(1, DateTime.Now, 0, 0, CancellationToken.None);
-        await _databaseService.CreateSale(1, DateTime.Now.AddDays(1), 0, 0, CancellationToken.None);
+        var dateNow = DateOnly.FromDateTime(DateTime.Now);
+        await _databaseService.CreateSale(1, dateNow, 0, 0, CancellationToken.None);
+        await _databaseService.CreateSale(1, dateNow.AddDays(1), 0, 0, CancellationToken.None);
 
         await Assert.ThrowsAsync<CalculationsException>(async () =>
         {

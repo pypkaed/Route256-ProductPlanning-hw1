@@ -1,11 +1,13 @@
 using ProductPlanningApplication.DataAccess;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningApplication.Dtos;
 using ProductPlanningApplication.Dtos.Mapping;
 using ProductPlanningApplication.Exceptions;
+using ProductPlanningApplication.Extensions;
 using ProductPlanningDomain.Sales;
 using ProductPlanningDomain.Sales.ValueObjects;
 
-namespace ProductPlanningApplication.DomainServices;
+namespace ProductPlanningApplication.DomainServices.Services;
 
 public class DatabaseService : IDatabaseService
 {
@@ -29,12 +31,16 @@ public class DatabaseService : IDatabaseService
             amountSold: new ProductAmount(sales),
             inStock: new ProductAmount(stock));
 
-        if (await _databaseContext.Sales
-                .FindAsync(
-                    new object?[] { sale.ProductId, sale.Date },
-                    cancellationToken) is not null)
+        bool saleExists = await _databaseContext.Sales
+            .FindAsync(
+                sale.GetCompositeKeys(),
+                cancellationToken) is not null;
+        
+        if (saleExists)
         {
-            throw ServiceException.RepeatingEntity("Sale", new object?[] { sale.ProductId, sale });
+            throw ServiceException.RepeatingEntity(
+                "Sale",
+                sale.GetCompositeKeys());
         }
         
         _databaseContext.Sales.Add(sale);
@@ -46,23 +52,23 @@ public class DatabaseService : IDatabaseService
     public async Task<SeasonalCoefficientDto> CreateSeasonalCoefficient(
         int productId,
         int month,
-        decimal coeff,
+        decimal coefficient,
         CancellationToken cancellationToken)
     {
-        var coefficient = new Coefficient(coeff);
-        var seasonalCoefficient = new SeasonalCoefficient(productId, coefficient, month);
+        var coefficientModel = new Coefficient(coefficient);
+        var seasonalCoefficient = new SeasonalCoefficient(productId, coefficientModel, month);
+
+        bool coefficientExist = await _databaseContext
+            .SeasonalCoefficients
+            .FindAsync(
+                seasonalCoefficient.GetCompositeKeys(),
+                cancellationToken) is not null;
         
-        if (await _databaseContext.SeasonalCoefficients
-                .FindAsync(new object?[]
-                {
-                    seasonalCoefficient.ProductId,
-                    seasonalCoefficient.Month
-                }, cancellationToken) is not null)
+        if (coefficientExist)
         {
-            throw ServiceException.RepeatingEntity("SalesCoefficient" ,
-                new object?[] { 
-                    seasonalCoefficient.ProductId,
-                    seasonalCoefficient.Month });
+            throw ServiceException.RepeatingEntity(
+                "SalesCoefficient",
+                seasonalCoefficient.GetCompositeKeys());
         }
 
         _databaseContext.SeasonalCoefficients.Add(seasonalCoefficient);
@@ -98,33 +104,24 @@ public class DatabaseService : IDatabaseService
 
         return coefficientList.AsDto();
     }
+    
 
-    public bool AnySaleRecordExists(IEnumerable<Sale> sales)
+    private bool AnySaleRecordExists(IEnumerable<Sale> sales)
     {
-        var keys = sales.Select(e => new object?[]
-        {
-            e.ProductId,
-            e.Date
-        }).ToList();
+        var allKeys = sales
+            .Select(e => e.GetCompositeKeys())
+            .ToList();
 
-        return _databaseContext.Sales.Any(e => keys.Contains(new object?[]
-        {
-            e.ProductId,
-            e.Date
-        }));
+        return _databaseContext.Sales
+            .Any(e => allKeys.Contains(e.GetCompositeKeys()));
     }
-    public bool AnySeasonalCoefficientRecordExists(IEnumerable<SeasonalCoefficient> coefficients)
+    private bool AnySeasonalCoefficientRecordExists(IEnumerable<SeasonalCoefficient> coefficients)
     {
-        var keys = coefficients.Select(e => new object?[]
-        {
-            e.ProductId,
-            e.Month
-        }).ToList();
+        var allKeys = coefficients
+            .Select(coeff => coeff.GetCompositeKeys())
+            .ToList();
 
-        return _databaseContext.SeasonalCoefficients.Any(e => keys.Contains(new object?[]
-        {
-            e.ProductId,
-            e.Month
-        }));
+        return _databaseContext.SeasonalCoefficients
+            .Any(coeff => allKeys.Contains(coeff.GetCompositeKeys()));
     }
 }

@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using ProductPlanningApplication.DomainServices;
+using ProductPlanningApplication.DomainServices.Services;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 
 namespace ProductPlanningApplication.Extensions;
 

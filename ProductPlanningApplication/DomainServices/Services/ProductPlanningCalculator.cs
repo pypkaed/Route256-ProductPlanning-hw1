@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using ProductPlanningApplication.DataAccess;
+using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningApplication.Dtos;
 using ProductPlanningApplication.Exceptions;
 using ProductPlanningApplication.Extensions;
 
-namespace ProductPlanningApplication.DomainServices;
+namespace ProductPlanningApplication.DomainServices.Services;
 
 public class ProductPlanningCalculator : IProductPlanningCalculator
 {
