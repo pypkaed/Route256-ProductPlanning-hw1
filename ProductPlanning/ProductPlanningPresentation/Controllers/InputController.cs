@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ProductPlanningApplication.DomainServices.MediatROperations.Files;
+using ProductPlanningApplication.DomainServices.Operations.Requests;
 using ProductPlanningApplication.Dtos;
 
 namespace ProductPlanningPresentation.Controllers;
@@ -22,10 +22,10 @@ public class InputController : ControllerBase
         IFormFile file,
         CancellationToken cancellationToken)
     {
-        var request = new UploadSalesFileOperation.Request(file.OpenReadStream());
+        var request = new UploadSalesFileRequest(file.OpenReadStream());
         var response = await _mediator.Send(request, cancellationToken);
 
-        return Ok(response.Sales);
+        return Ok(response);
     }
     
     [HttpPost]
@@ -34,9 +34,9 @@ public class InputController : ControllerBase
         IFormFile file,
         CancellationToken cancellationToken)
     {
-        var request = new UploadSeasonalCoefficientFileOperation.Request(file.OpenReadStream());
+        var request = new UploadSeasonalCoefficientFileRequest(file.OpenReadStream());
         var response = await _mediator.Send(request, cancellationToken);
 
-        return Ok(response.Sales);
+        return Ok(response);
     }
 }

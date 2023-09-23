@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ProductPlanningApplication.DomainServices.MediatROperations.Sales;
+using ProductPlanningApplication.DomainServices.Operations.Requests;
 using ProductPlanningApplication.Dtos;
 using ProductPlanningPresentation.Requests;
 
@@ -21,10 +21,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-ads")]
     public async Task<ActionResult<CalculateAverageDailySalesDto>> CalculateAverageDailySales(
-        [FromBody] CalculateAverageDailySalesRequest request,
+        [FromBody] CalculateAverageDailySalesUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CalculateAverageDailySalesOperation.Request(request.ProductId);
+        var sendRequest = new CalculateAverageDailySalesRequest(userRequest.ProductId);
         var response = await _mediator.Send(sendRequest, cancellationToken);
 
         return Ok(response);
@@ -33,12 +33,12 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-sales-prediction")]
     public async Task<ActionResult<CalculateSalesPredictionDto>> CalculateSalesPrediction(
-        [FromBody] CalculateSalesPredictionRequest request,
+        [FromBody] CalculateSalesPredictionUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CalculateSalesPredictionOperation.Request(
-            request.ProductId,
-            request.Days);
+        var sendRequest = new CalculateSalesPredictionRequest(
+            userRequest.ProductId,
+            userRequest.Days);
         var response = await _mediator.Send(sendRequest, cancellationToken);
 
         return Ok(response);
@@ -47,10 +47,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-demand-supplied")]
     public async Task<ActionResult<CalculateDemandSuppliedDto>> CalculateDemandSupplied(
-        [FromBody] CalculateDemandSuppliedRequest request,
+        [FromBody] CalculateDemandSuppliedUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CalculateDemandSuppliedOperation.Request(request.ProductId, request.Days, request.Date);
+        var sendRequest = new CalculateDemandSuppliedRequest(userRequest.ProductId, userRequest.Days, userRequest.Date);
         var response = await _mediator.Send(sendRequest, cancellationToken);
     
         return Ok(response);
@@ -59,10 +59,10 @@ public class CalculatorController : ControllerBase
     [HttpPost]
     [Route("calculate-demand")]
     public async Task<ActionResult<CalculateDemandDto>> CalculateDemand(
-        [FromBody] CalculateDemandRequest request,
+        [FromBody] CalculateDemandUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CalculateDemandOperation.Request(request.ProductId, request.Days);
+        var sendRequest = new CalculateDemandRequest(userRequest.ProductId, userRequest.Days);
         var response = await _mediator.Send(sendRequest, cancellationToken);
     
         return Ok(response);

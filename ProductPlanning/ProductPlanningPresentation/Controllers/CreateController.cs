@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ProductPlanningApplication.DomainServices.MediatROperations.Sales;
+using ProductPlanningApplication.DomainServices.Operations.Requests;
 using ProductPlanningApplication.Dtos;
 using ProductPlanningPresentation.Requests;
 
@@ -20,31 +20,31 @@ public class CreateController : ControllerBase
     [HttpPost]
     [Route("create-sale")]
     public async Task<ActionResult<SaleDto>> CreateSale(
-        [FromBody] CreateSaleRequest request,
+        [FromBody] CreateSaleUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CreateSaleOperation.Request(
-            request.ProductId,
-            request.Date,
-            request.Sales,
-            request.Stock);
+        var sendRequest = new CreateSaleRequest(
+            userRequest.ProductId,
+            userRequest.Date,
+            userRequest.Sales,
+            userRequest.Stock);
         var response = await _mediator.Send(sendRequest, cancellationToken);
 
-        return Ok(response.Sale);
+        return Ok(response);
     }
     
     [HttpPost]
     [Route("create-seasonal-coefficient")]
     public async Task<ActionResult<SeasonalCoefficientDto>> CreateSeasonalCoefficient(
-        [FromBody] CreateSeasonalCoefficientRequest request,
+        [FromBody] CreateSeasonalCoefficientUserRequest userRequest,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CreateSeasonalCoefficientOperation.Request(
-            request.ProductId,
-            request.Coefficient,
-            request.Month);
+        var sendRequest = new CreateSeasonalCoefficientRequest(
+            userRequest.ProductId,
+            userRequest.Coefficient,
+            userRequest.Month);
         var response = await _mediator.Send(sendRequest, cancellationToken);
 
-        return Ok(response.SeasonalCoefficient);
+        return Ok(response);
     }
 }

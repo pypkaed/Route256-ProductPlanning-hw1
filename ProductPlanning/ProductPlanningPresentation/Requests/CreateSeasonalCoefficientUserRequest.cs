@@ -1,6 +1,6 @@
 namespace ProductPlanningPresentation.Requests;
 
-public record CreateSeasonalCoefficientRequest(
+public record CreateSeasonalCoefficientUserRequest(
         int ProductId,
         decimal Coefficient,
         int Month);

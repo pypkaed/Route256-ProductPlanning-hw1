@@ -1,0 +1,3 @@
+namespace ProductPlanningPresentation.Requests;
+
+public record CalculateAverageDailySalesUserRequest(int ProductId);

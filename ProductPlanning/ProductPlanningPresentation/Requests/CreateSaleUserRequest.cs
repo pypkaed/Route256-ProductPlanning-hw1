@@ -1,6 +1,6 @@
 namespace ProductPlanningPresentation.Requests;
 
-public record CreateSaleRequest(
+public record CreateSaleUserRequest(
     int ProductId,
     DateOnly Date, 
     decimal Sales, 
