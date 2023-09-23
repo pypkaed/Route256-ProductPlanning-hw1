@@ -2,12 +2,15 @@ using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 using MediatR;
+using ProductPlanningApplication.DomainServices.Operations.Requests;
+using ProductPlanningApplication.DomainServices.Operations.Responses;
+using ProductPlanningApplication.Dtos.Csv;
 using ProductPlanningApplication.Dtos.Mapping;
-using static ProductPlanningApplication.DomainServices.MediatROperations.Files.UploadSeasonalCoefficientFileOperation;
 
-namespace ProductPlanningApplication.DomainServices.MediatRHandlers.File;
+namespace ProductPlanningApplication.DomainServices.Handlers.File;
 
-public class UploadSeasonalCoefficientFileHandler : IRequestHandler<Request, Response>
+public class UploadSeasonalCoefficientFileHandler 
+    : IRequestHandler<UploadSeasonalCoefficientFileRequest, UploadSeasonalCoefficientFileResponse>
 {
     private readonly IDatabaseService _databaseService;
 
@@ -17,7 +20,9 @@ public class UploadSeasonalCoefficientFileHandler : IRequestHandler<Request, Res
     }
 
     
-    public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<UploadSeasonalCoefficientFileResponse> Handle(
+        UploadSeasonalCoefficientFileRequest request,
+        CancellationToken cancellationToken)
     {
         if (request.FileStream.Length <= 0)
             throw new Exception("Empty file");
@@ -30,7 +35,7 @@ public class UploadSeasonalCoefficientFileHandler : IRequestHandler<Request, Res
 
             var coefficientsDto = await _databaseService.CreateSeasonalCoefficientsBulk(seasonalCoefficients, cancellationToken);
             
-            return new Response(coefficientsDto);
+            return new UploadSeasonalCoefficientFileResponse(coefficientsDto);
         }
     }
 }

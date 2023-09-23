@@ -1,4 +1,4 @@
-namespace ProductPlanningApplication.DomainServices.MediatRHandlers.File;
+namespace ProductPlanningApplication.Dtos.Csv;
 
 public class SaleCsv
 {

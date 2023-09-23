@@ -2,13 +2,15 @@ using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 using MediatR;
-using ProductPlanningApplication.Dtos;
+using ProductPlanningApplication.DomainServices.Operations.Requests;
+using ProductPlanningApplication.DomainServices.Operations.Responses;
+using ProductPlanningApplication.Dtos.Csv;
 using ProductPlanningApplication.Dtos.Mapping;
-using static ProductPlanningApplication.DomainServices.MediatROperations.Files.UploadSalesFileOperation;
 
-namespace ProductPlanningApplication.DomainServices.MediatRHandlers.File;
+namespace ProductPlanningApplication.DomainServices.Handlers.File;
 
-public class UploadSalesFileHandler : IRequestHandler<Request, Response>
+public class UploadSalesFileHandler
+    : IRequestHandler<UploadSalesFileRequest, UploadSalesFileResponse>
 {
     private readonly IDatabaseService _databaseService;
 
@@ -17,7 +19,9 @@ public class UploadSalesFileHandler : IRequestHandler<Request, Response>
         _databaseService = databaseService;
     }
     
-    public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<UploadSalesFileResponse> Handle(
+        UploadSalesFileRequest request,
+        CancellationToken cancellationToken)
     {
         if (request.FileStream.Length <= 0)
             throw new Exception("Empty file");
@@ -30,7 +34,7 @@ public class UploadSalesFileHandler : IRequestHandler<Request, Response>
 
             var salesDto = await _databaseService.CreateSalesBulk(sales, cancellationToken);
             
-            return new Response(salesDto);
+            return new UploadSalesFileResponse(salesDto);
         }
     }
 }

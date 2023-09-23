@@ -10,8 +10,8 @@ public interface IProductPlanningCalculator
     Task<CalculateSalesPredictionDto> CalculateSalesPredictionAsync(
         int productId,
         int numOfDays, 
-        DateTime currentDate,
+        DateOnly currentDate,
         CancellationToken cancellationToken);
-    Task<CalculateDemandSuppliedDto> CalculateDemandSuppliedAsync(int productId, int numOfDays, DateTime supplyDate, CancellationToken cancellationToken);
+    Task<CalculateDemandSuppliedDto> CalculateDemandSuppliedAsync(int productId, int numOfDays, DateOnly supplyDate, CancellationToken cancellationToken);
     Task<CalculateDemandDto> CalculateDemandAsync(int productId, int numOfDays, CancellationToken cancellationToken);
 }
