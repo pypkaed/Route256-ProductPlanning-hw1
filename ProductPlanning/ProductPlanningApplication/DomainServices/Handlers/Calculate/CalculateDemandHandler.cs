@@ -20,7 +20,7 @@ public class CalculateDemandHandler
         CancellationToken cancellationToken)
     {
         var createDemandDto = await _calculator
-            .CalculateDemandAsync(request.ProductId, request.Days, cancellationToken);
+            .CalculateDemand(request.ProductId, request.Days, cancellationToken);
         
         return new CalculateDemandResponse(createDemandDto);
     }

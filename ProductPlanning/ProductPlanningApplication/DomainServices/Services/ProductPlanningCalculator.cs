@@ -16,7 +16,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         _databaseContext = databaseContext;
     }
 
-    public async Task<CalculateAverageDailySalesDto> CalculateAverageDailySalesAsync(
+    public async Task<CalculateAverageDailySalesDto> CalculateAverageDailySales(
         int productId,
         CancellationToken cancellationToken)
     {
@@ -38,9 +38,9 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         return new CalculateAverageDailySalesDto(averageDailySales);
     }
 
-    public async Task<CalculateSalesPredictionDto> CalculateSalesPredictionAsync(int productId, int numOfDays, CancellationToken cancellationToken)
+    public async Task<CalculateSalesPredictionDto> CalculateSalesPrediction(int productId, int numOfDays, CancellationToken cancellationToken)
     {
-        var averageDailySales = await CalculateAverageDailySalesAsync(productId, cancellationToken);
+        var averageDailySales = await CalculateAverageDailySales(productId, cancellationToken);
         var currentDate = DateTime.Now;
         var monthsInFuture = Enumerable.Range(0, numOfDays)
             .Select(offset => currentDate.AddDays(offset))
@@ -63,13 +63,13 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         var salesPrediction = averageDailySales.AverageDailySales * coefficient;
         return new CalculateSalesPredictionDto(salesPrediction);
     }
-    public async Task<CalculateSalesPredictionDto> CalculateSalesPredictionAsync(
+    public async Task<CalculateSalesPredictionDto> CalculateSalesPrediction(
         int productId,
         int numOfDays,
         DateOnly currentDate,
         CancellationToken cancellationToken)
     {
-        var averageDailySales = await CalculateAverageDailySalesAsync(productId, cancellationToken);
+        var averageDailySales = await CalculateAverageDailySales(productId, cancellationToken);
         var monthsInFuture = Enumerable.Range(0, numOfDays)
             .Select(offset => currentDate.AddDays(offset))
             .GroupBy(date => date.Month)
@@ -92,7 +92,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         return new CalculateSalesPredictionDto(salesPrediction);
     }
 
-    public async Task<CalculateDemandSuppliedDto> CalculateDemandSuppliedAsync(
+    public async Task<CalculateDemandSuppliedDto> CalculateDemandSupplied(
         int productId,
         int numOfDays,
         DateOnly supplyDate,
@@ -104,7 +104,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
 
         var dateOnlyNow = DateOnly.FromDateTime(DateTime.Now);
         var daysUntilSupply = supplyDate.DayNumber - dateOnlyNow.DayNumber;
-        var salesPredictionSupply = await CalculateSalesPredictionAsync(productId, daysUntilSupply, cancellationToken);
+        var salesPredictionSupply = await CalculateSalesPrediction(productId, daysUntilSupply, cancellationToken);
 
         var lastSaleProductEntry = await _databaseContext.Sales
             .Where(s => s.ProductId == productId)
@@ -120,7 +120,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         stockSupplied = stockSupplied > 0 ? stockSupplied : 0;
         
 
-        var salesPrediction = await CalculateSalesPredictionAsync(
+        var salesPrediction = await CalculateSalesPrediction(
             productId,
             numOfDays - daysUntilSupply,
             currentDate: dateOnlyNow.AddDays(daysUntilSupply),
@@ -130,7 +130,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         return new CalculateDemandSuppliedDto(demand > 0 ? demand : 0);
     }
     
-    public async Task<CalculateDemandDto> CalculateDemandAsync(
+    public async Task<CalculateDemandDto> CalculateDemand(
         int productId, 
         int numOfDays,
         CancellationToken cancellationToken)
@@ -147,7 +147,7 @@ public class ProductPlanningCalculator : IProductPlanningCalculator
         
         var productAmountInStock = lastSaleProductEntry.InStock;
 
-        var salesPrediction = await CalculateSalesPredictionAsync(productId, numOfDays, cancellationToken);
+        var salesPrediction = await CalculateSalesPrediction(productId, numOfDays, cancellationToken);
         var demand = salesPrediction.SalesPrediction - productAmountInStock.Value;
 
         return new CalculateDemandDto(demand > 0 ? demand : 0);

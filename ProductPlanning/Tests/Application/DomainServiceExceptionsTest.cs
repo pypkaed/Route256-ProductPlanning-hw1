@@ -35,7 +35,7 @@ public class DomainServiceExceptionsTest
     {
         await Assert.ThrowsAsync<ServiceException>(async () =>
         {
-            await _calculator.CalculateSalesPredictionAsync(1, 15, CancellationToken.None);
+            await _calculator.CalculateSalesPrediction(1, 15, CancellationToken.None);
         });
     }
 
@@ -60,7 +60,7 @@ public class DomainServiceExceptionsTest
 
         await Assert.ThrowsAsync<CalculationsException>(async () =>
         {
-            await _calculator.CalculateAverageDailySalesAsync(1, CancellationToken.None);
+            await _calculator.CalculateAverageDailySales(1, CancellationToken.None);
         });
     }
 }

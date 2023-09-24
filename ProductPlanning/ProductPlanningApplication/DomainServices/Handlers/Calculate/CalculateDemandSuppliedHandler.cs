@@ -20,7 +20,7 @@ public class CalculateDemandSuppliedHandler
         CancellationToken cancellationToken)
     {
         var calculateDemandSuppliedDto = await _calculator
-            .CalculateDemandSuppliedAsync(request.ProductId, request.Days, request.Date, cancellationToken);
+            .CalculateDemandSupplied(request.ProductId, request.Days, request.Date, cancellationToken);
         
         return new CalculateDemandSuppliedResponse(calculateDemandSuppliedDto);
     }

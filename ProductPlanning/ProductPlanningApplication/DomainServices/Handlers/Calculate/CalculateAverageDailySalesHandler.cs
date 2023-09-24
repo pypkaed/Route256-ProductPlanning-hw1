@@ -20,7 +20,7 @@ public class CalculateAverageDailySalesHandler :
         CancellationToken cancellationToken)
     {
         var averageDailySalesDto = await _calculator
-            .CalculateAverageDailySalesAsync(request.ProductId, cancellationToken);
+            .CalculateAverageDailySales(request.ProductId, cancellationToken);
         
         return new CalculateAverageDailySalesResponse(averageDailySalesDto);
     }

@@ -44,7 +44,7 @@ public class DomainServiceTest
             stock: 40, 
             CancellationToken.None);
 
-        var ads = await _calculator.CalculateAverageDailySalesAsync(1, CancellationToken.None);
+        var ads = await _calculator.CalculateAverageDailySales(1, CancellationToken.None);
         
         Assert.Equal(7.5m, ads.AverageDailySales);
     }
@@ -57,8 +57,8 @@ public class DomainServiceTest
         await ArrangeSales(productId: 1);
         await ArrangeSeasonalCoefficients(productId: 1);
 
-        var ads = await _calculator.CalculateAverageDailySalesAsync(productId: 1, CancellationToken.None);
-        var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
+        var ads = await _calculator.CalculateAverageDailySales(productId: 1, CancellationToken.None);
+        var salesPrediction = await _calculator.CalculateSalesPrediction(
             productId: 1,
             numOfDays: 13,
             currentDate: DateOnly.Parse("09/19/2023"),
@@ -77,11 +77,11 @@ public class DomainServiceTest
         await ArrangeSales(productId: 1);
         await ArrangeSeasonalCoefficients(productId: 1);
         
-        var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
+        var salesPrediction = await _calculator.CalculateSalesPrediction(
             productId: 1,
             numOfDays: 13,
             CancellationToken.None);
-        var demand = await _calculator.CalculateDemandAsync(
+        var demand = await _calculator.CalculateDemand(
             productId: 1,
             numOfDays: 13,
             CancellationToken.None);
@@ -103,18 +103,18 @@ public class DomainServiceTest
 
         var dateNow = DateOnly.FromDateTime(DateTime.Now);
 
-        var supplySalesPrediction = await _calculator.CalculateSalesPredictionAsync(
+        var supplySalesPrediction = await _calculator.CalculateSalesPrediction(
             productId: 1,
             numOfDays: 5,
             CancellationToken.None);
         var stockSupplied = 100 - supplySalesPrediction.SalesPrediction;
-        var salesPrediction = await _calculator.CalculateSalesPredictionAsync(
+        var salesPrediction = await _calculator.CalculateSalesPrediction(
             productId: 1,
             numOfDays: 13 - 5,
             currentDate: dateNow.AddDays(5),
             CancellationToken.None);
         
-        var demand = await _calculator.CalculateDemandSuppliedAsync(
+        var demand = await _calculator.CalculateDemandSupplied(
             productId: 1,
             numOfDays: 13,
             supplyDate: DateOnly.Parse("09/25/2023"),

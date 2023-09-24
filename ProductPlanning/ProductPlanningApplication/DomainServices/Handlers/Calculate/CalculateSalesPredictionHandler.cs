@@ -20,7 +20,7 @@ public class CalculateSalesPredictionHandler
         CancellationToken cancellationToken)
     {
         var calculateSalesPredictionDto = await _calculator
-            .CalculateSalesPredictionAsync(request.ProductId, request.Days, cancellationToken);
+            .CalculateSalesPrediction(request.ProductId, request.Days, cancellationToken);
         
         return new CalculateSalesPredictionResponse(calculateSalesPredictionDto);
     }

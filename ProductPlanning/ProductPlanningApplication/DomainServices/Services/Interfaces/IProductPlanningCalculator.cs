@@ -4,25 +4,25 @@ namespace ProductPlanningApplication.DomainServices.Services.Interfaces;
 
 public interface IProductPlanningCalculator
 {
-    Task<CalculateAverageDailySalesDto> CalculateAverageDailySalesAsync(
+    Task<CalculateAverageDailySalesDto> CalculateAverageDailySales(
         int productId,
         CancellationToken cancellationToken);
-    Task<CalculateSalesPredictionDto> CalculateSalesPredictionAsync(
+    Task<CalculateSalesPredictionDto> CalculateSalesPrediction(
         int productId,
         int numOfDays,
         CancellationToken cancellationToken);
 
-    Task<CalculateSalesPredictionDto> CalculateSalesPredictionAsync(
+    Task<CalculateSalesPredictionDto> CalculateSalesPrediction(
         int productId,
         int numOfDays, 
         DateOnly currentDate,
         CancellationToken cancellationToken);
-    Task<CalculateDemandSuppliedDto> CalculateDemandSuppliedAsync(
+    Task<CalculateDemandSuppliedDto> CalculateDemandSupplied(
         int productId,
         int numOfDays,
         DateOnly supplyDate, 
         CancellationToken cancellationToken);
-    Task<CalculateDemandDto> CalculateDemandAsync(
+    Task<CalculateDemandDto> CalculateDemand(
         int productId,
         int numOfDays,
         CancellationToken cancellationToken);
