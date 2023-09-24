@@ -8,11 +8,11 @@ namespace ProductPlanningPresentation.Controllers;
 
 [ApiController]
 [Route("api/")]
-public class CreateController : ControllerBase
+public class SaleController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public CreateController(IMediator mediator)
+    public SaleController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -34,16 +34,13 @@ public class CreateController : ControllerBase
     }
     
     [HttpPost]
-    [Route("create-seasonal-coefficient")]
-    public async Task<ActionResult<SeasonalCoefficientDto>> CreateSeasonalCoefficient(
-        [FromBody] CreateSeasonalCoefficientUserRequest userRequest,
+    [Route("upload-file-sales")]
+    public async Task<ActionResult<List<SaleDto>>> CreateSaleEntriesFromFile(
+        IFormFile file,
         CancellationToken cancellationToken)
     {
-        var sendRequest = new CreateSeasonalCoefficientRequest(
-            userRequest.ProductId,
-            userRequest.Coefficient,
-            userRequest.Month);
-        var response = await _mediator.Send(sendRequest, cancellationToken);
+        var request = new UploadSalesFileRequest(file.OpenReadStream());
+        var response = await _mediator.Send(request, cancellationToken);
 
         return Ok(response);
     }
