@@ -11,7 +11,7 @@ public static class ServiceCollectionExtension
         collection.AddScoped<IProductPlanningCalculator, ProductPlanningCalculator>();
         collection.AddScoped<IDatabaseService, DatabaseService>();
         collection.AddMediatR(cfg 
-            => cfg.RegisterServicesFromAssembly(typeof(IMediatRAssemblyScan).Assembly));
+            => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtension).Assembly));
         return collection;
     }
 }
