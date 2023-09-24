@@ -10,9 +10,7 @@ public static class ServiceCollectionExtension
         this IServiceCollection collection,
         Action<DbContextOptionsBuilder> config)
     {
-        collection.AddDbContext<ProductPlanningDatabaseContext>(config);
-        collection.AddScoped<IProductPlanningDatabaseContext>(sp =>
-            sp.GetRequiredService<ProductPlanningDatabaseContext>());
+        collection.AddDbContext<IProductPlanningDatabaseContext, ProductPlanningDatabaseContext>(config);
 
         return collection;
     }
