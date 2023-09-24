@@ -7,6 +7,7 @@ using ProductPlanningApplication.DomainServices.Operations.Responses;
 using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningApplication.Dtos.Csv;
 using ProductPlanningApplication.Dtos.Mapping;
+using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningApplication.DomainServices.Handlers.File;
 
@@ -27,15 +28,17 @@ public class UploadSalesFileHandler
         if (request.FileStream.Length <= 0)
             throw new Exception("Empty file");
 
+        IEnumerable<Sale> sales;
         
         using (var reader = new StreamReader(request.FileStream))
         using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
         {
-            var sales = csv.GetRecords<SaleCsv>().AsSale();
-
-            var salesDto = await _databaseService.CreateSalesBulk(sales, cancellationToken);
-            
-            return new UploadSalesFileResponse(salesDto);
+            sales = csv.GetRecords<SaleCsv>().AsSale();
         }
+
+        var salesDto = await _databaseService.CreateSalesBulk(sales, cancellationToken);
+            
+        return new UploadSalesFileResponse(salesDto);
+        
     }
 }

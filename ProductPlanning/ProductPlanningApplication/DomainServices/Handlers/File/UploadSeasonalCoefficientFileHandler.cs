@@ -7,6 +7,7 @@ using ProductPlanningApplication.DomainServices.Operations.Responses;
 using ProductPlanningApplication.DomainServices.Services.Interfaces;
 using ProductPlanningApplication.Dtos.Csv;
 using ProductPlanningApplication.Dtos.Mapping;
+using ProductPlanningDomain.Sales;
 
 namespace ProductPlanningApplication.DomainServices.Handlers.File;
 
@@ -28,15 +29,17 @@ public class UploadSeasonalCoefficientFileHandler
         if (request.FileStream.Length <= 0)
             throw new Exception("Empty file");
 
+        IEnumerable<SeasonalCoefficient> seasonalCoefficients;
         
         using (var reader = new StreamReader(request.FileStream))
         using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
         {
-            var seasonalCoefficients = csv.GetRecords<SeasonalCoefficientCsv>().AsSeasonalCoefficient();
-
-            var coefficientsDto = await _databaseService.CreateSeasonalCoefficientsBulk(seasonalCoefficients, cancellationToken);
-            
-            return new UploadSeasonalCoefficientFileResponse(coefficientsDto);
+            seasonalCoefficients = csv.GetRecords<SeasonalCoefficientCsv>().AsSeasonalCoefficient();
         }
+
+        var coefficientsDto = await _databaseService.CreateSeasonalCoefficientsBulk(seasonalCoefficients, cancellationToken);
+            
+        return new UploadSeasonalCoefficientFileResponse(coefficientsDto);
+        
     }
 }
