@@ -10,8 +10,7 @@
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
       <PackageReference Include="xunit" Version="2.5.1" />
     </ItemGroup>
-
-
+    
     <ItemGroup>
       <ProjectReference Include="..\ProductPlanningApplication\ProductPlanningApplication.csproj" />
       <ProjectReference Include="..\ProductPlanningDataAccess\ProductPlanningDataAccess.csproj" />

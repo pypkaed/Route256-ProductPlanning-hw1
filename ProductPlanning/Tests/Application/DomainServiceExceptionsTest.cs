@@ -10,8 +10,10 @@ using Xunit;
 
 namespace Tests.Application;
 
-public class DomainServiceExceptionsTest
+[Collection("NonParallel")]
+public class DomainServiceExceptionsTest : IDisposable
 {
+    private readonly ProductPlanningDatabaseContext _context;
     private readonly IDatabaseService _databaseService;
     private readonly IProductPlanningCalculator _calculator;
 
@@ -22,12 +24,12 @@ public class DomainServiceExceptionsTest
                 .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .Options;
-        var context = new ProductPlanningDatabaseContext(options);
-        context.Database.EnsureCreated();
-        context.Database.EnsureDeleted();
+        _context = new ProductPlanningDatabaseContext(options);
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
 
-        _databaseService = new DatabaseService(context);
-        _calculator = new ProductPlanningCalculator(context);
+        _databaseService = new DatabaseService(_context);
+        _calculator = new ProductPlanningCalculator(_context);
     }
 
     [Fact]
@@ -62,5 +64,10 @@ public class DomainServiceExceptionsTest
         {
             await _calculator.CalculateAverageDailySales(1, CancellationToken.None);
         });
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

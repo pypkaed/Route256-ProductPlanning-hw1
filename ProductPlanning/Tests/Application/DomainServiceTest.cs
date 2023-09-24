@@ -6,24 +6,26 @@ using Xunit;
 
 namespace Tests.Application;
 
-public class DomainServiceTest
+[Collection("NonParallel")]
+public class DomainServiceTest : IDisposable
 {
+    private readonly ProductPlanningDatabaseContext _context;
     private readonly IDatabaseService _databaseService;
     private readonly IProductPlanningCalculator _calculator;
 
     public DomainServiceTest()
     {
-        DbContextOptions<ProductPlanningDatabaseContext> options =
+        var options =
             new DbContextOptionsBuilder<ProductPlanningDatabaseContext>()
                 .UseInMemoryDatabase(databaseName: "InMemoryDb")
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .Options;
-        var context = new ProductPlanningDatabaseContext(options);
-        context.Database.EnsureCreated();
-        context.Database.EnsureDeleted();
+        _context = new ProductPlanningDatabaseContext(options);
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
 
-        _databaseService = new DatabaseService(context);
-        _calculator = new ProductPlanningCalculator(context);
+        _databaseService = new DatabaseService(_context);
+        _calculator = new ProductPlanningCalculator(_context);
     }
 
     [Fact]
@@ -70,10 +72,6 @@ public class DomainServiceTest
     [Fact]
     public async Task CalculateDemandNow()
     {
-        // in future:
-        // 12 days in September with seasonal coefficient of 0.1,
-        // 1 day in November with seasonal coefficient 10
-        // last stock: 100
         await ArrangeSales(productId: 1);
         await ArrangeSeasonalCoefficients(productId: 1);
         
@@ -88,7 +86,7 @@ public class DomainServiceTest
         var expected = salesPrediction.SalesPrediction - 100;
         expected = expected > 0 ? expected : 0;
         
-        Assert.Equal(expected, demand.Demand);
+        Assert.Equal((float) expected, (float) demand.Demand);
     }
     
     [Fact]
@@ -157,9 +155,34 @@ public class DomainServiceTest
 
     private async Task ArrangeSeasonalCoefficients(int productId)
     {
-        var month = 9;
+        var month = 1;
         await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
-        month = 10;
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 0.1m, CancellationToken.None);
+        month++;
         await _databaseService.CreateSeasonalCoefficient(productId, month, 10m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 10m, CancellationToken.None);
+        month++;
+        await _databaseService.CreateSeasonalCoefficient(productId, month, 10m, CancellationToken.None);
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }
